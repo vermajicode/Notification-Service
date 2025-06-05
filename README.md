@@ -1,122 +1,66 @@
-# Notification-Service
-This is a Notification Service built using Flask and RabbitMQ, which allows sending notifications to users via Email, SMS, and In-app notification system.
-
-Features
-Email Notifications via Gmail SMTP.
-
-SMS Notifications via Twilio.
-
-Message Queue using RabbitMQ to process notifications asynchronously.
-
-API endpoints for sending and fetching notifications.
-
-Assumptions
-Gmail Account: Used for sending emails. You need to enable Less Secure Apps or generate an App Password if you have 2FA enabled.
-
-Twilio Account: You need a Twilio Account SID, Auth Token, and a Twilio phone number to send SMS.
-
-RabbitMQ: Assumed to be installed and running locally.
+# Notification Service
+This service provides an API to send notifications (SMS and Email) to users. Notifications are queued using RabbitMQ for processing, and messages are sent either through Twilio for SMS or via SMTP for email.
 
 Setup Instructions
-1. Clone the Repository
-Clone this repository to your local machine:
+Prerequisites
+Python 3.x - Make sure you have Python 3.x installed on your machine.
 
+RabbitMQ - This service uses RabbitMQ for queuing messages. Ensure you have RabbitMQ installed and running locally.
 
-git clone https://github.com/your-username/notification-service.git
+Twilio Account - You need a Twilio account with the SID, Auth Token, and a phone number to send SMS.
+
+SMTP Credentials - For sending email notifications, you need an SMTP service (e.g., Gmail, SendGrid). You'll need the email and password for the SMTP login.
+
+1. Clone the repository
+git clone https://github.com/yourusername/notification-service.git
 cd notification-service
 
-2. Install Dependencies
-2.1 Set Up a Python Virtual Environment
-It's recommended to use a virtual environment to isolate dependencies:
-
-python3 -m venv env
-source env/bin/activate  # On Windows use `env\Scripts\activate`
-2.2 Install the Required Libraries
-Install the necessary dependencies using pip:
+2. Install dependencies
+Ensure you have the required dependencies by running the following command:
 
 pip install -r requirements.txt
-The dependencies are:
 
-Flask: A web framework to create API endpoints.
+3. Configure SMTP and Twilio
+In the app.py file, update the following with your credentials:
 
-pika: Python library to interface with RabbitMQ.
+SMTP:
 
-Twilio: Library to send SMS using Twilio.
+Update the SMTP server configuration with your email provider's settings.
 
-smtplib: Standard Python library to send emails via Gmail.
+Replace "email@example.com" and "password" with your actual credentials.
 
-3. Configuration
-3.1 Gmail Email Setup
-To send emails via Gmail, you'll need to either:
+Twilio:
 
-Enable Less Secure Apps or
+Replace "your_twilio_account_sid", "your_twilio_auth_token", and "your_twilio_phone_number" with your actual Twilio details.
 
-Use App Passwords (if you have 2FA enabled).
+4. Start RabbitMQ
+Make sure RabbitMQ is running on your machine. If not, you can start it with the following command (depending on your installation method):
 
-For enabling Less Secure Apps:
+rabbitmq-server
 
-Enable Less Secure Apps.
-
-If you have 2FA enabled:
-
-Generate an App Password.
-
-Replace the "yourpassword" in the send_email function with either your regular Gmail password (if Less Secure Apps is enabled) or your App Password (if 2FA is enabled).
-
-3.2 Twilio Setup
-Create a Twilio account at Twilio's website.
-
-Get your Twilio Account SID, Auth Token, and Twilio phone number.
-
-Replace the your_twilio_account_sid, your_twilio_auth_token, and your_twilio_phone_number in app.py with your Twilio credentials.
-
-3.3 RabbitMQ Setup
-Install RabbitMQ from RabbitMQ Download Page.
-
-Make sure RabbitMQ is running locally before starting the Flask app.
-
-On Windows: rabbitmq-server.bat start
-
-4. Run the Application
-4.1 Start the Flask API
-Run the Flask server:
+5. Run the Flask API
+To run the notification service API, use the following command:
 
 python app.py
-By default, Flask will run on http://127.0.0.1:5000/.
 
-4.2 Start the Worker
-To process the notifications in RabbitMQ, run the worker in another terminal:
+This will start a Flask server on http://localhost:5000. The available endpoints are:
+
+POST /notifications: Send a notification to a user. Requires JSON body with user_id, type (email/sms), and message.
+
+GET /users/{id}/notifications: Fetch notifications for a user (returns an empty list for now).
+
+6. Process the Notifications
+To start processing the notifications, run the worker script:
 
 python worker.py
-4.3 Test the API
-Use Postman or cURL to test the POST /notifications and GET /users/{id}/notifications endpoints.
 
-Example of a POST /notifications request:
+This will consume notifications from the RabbitMQ queue and send either an email or SMS depending on the notification_type.
 
-{
-  "user_id": 123,
-  "type": "email",
-  "message": "This is your notification"
-}
-5. Directory Structure
+Assumptions
+The API is only processing email and SMS notifications; support for other notification types is not implemented yet.
 
-/Notification service
-├── app.py                  # Flask API logic
-├── worker.py               # Worker that processes RabbitMQ messages
-├── requirements.txt        # List of required Python libraries
-├── README.md               # This file
-└── /env                    # Virtual environment folder
-6. Known Issues
-Gmail may block sign-ins if there are repeated unsuccessful attempts. You may need to check your Gmail account security settings if this happens.
+RabbitMQ is used as the messaging queue for notification delivery.
 
-Ensure RabbitMQ is running locally, otherwise notifications won’t be processed.
+The code assumes that the user_id is an identifier for the user who should receive the notification but does not handle user data or store notifications.
 
-7. License
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-Example of requirements.txt:
-makefile
-
-Flask==2.2.3
-pika==1.3.1
-twilio==7.10.0
+You need valid email and Twilio credentials for the notification system to function.
