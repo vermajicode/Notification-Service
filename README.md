@@ -21,26 +21,19 @@ Setup Instructions
 1. Clone the Repository
 Clone this repository to your local machine:
 
-bash
-Copy
-Edit
+
 git clone https://github.com/your-username/notification-service.git
 cd notification-service
+
 2. Install Dependencies
 2.1 Set Up a Python Virtual Environment
 It's recommended to use a virtual environment to isolate dependencies:
 
-bash
-Copy
-Edit
 python3 -m venv env
 source env/bin/activate  # On Windows use `env\Scripts\activate`
 2.2 Install the Required Libraries
 Install the necessary dependencies using pip:
 
-bash
-Copy
-Edit
 pip install -r requirements.txt
 The dependencies are:
 
@@ -84,43 +77,30 @@ Make sure RabbitMQ is running locally before starting the Flask app.
 
 On Windows: rabbitmq-server.bat start
 
-On Linux: sudo service rabbitmq-server start
-
 4. Run the Application
 4.1 Start the Flask API
 Run the Flask server:
 
-bash
-Copy
-Edit
 python app.py
 By default, Flask will run on http://127.0.0.1:5000/.
 
 4.2 Start the Worker
 To process the notifications in RabbitMQ, run the worker in another terminal:
 
-bash
-Copy
-Edit
 python worker.py
 4.3 Test the API
 Use Postman or cURL to test the POST /notifications and GET /users/{id}/notifications endpoints.
 
 Example of a POST /notifications request:
 
-json
-Copy
-Edit
 {
   "user_id": 123,
   "type": "email",
   "message": "This is your notification"
 }
 5. Directory Structure
-bash
-Copy
-Edit
-/Notification system
+
+/Notification service
 ├── app.py                  # Flask API logic
 ├── worker.py               # Worker that processes RabbitMQ messages
 ├── requirements.txt        # List of required Python libraries
@@ -136,8 +116,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 Example of requirements.txt:
 makefile
-Copy
-Edit
+
 Flask==2.2.3
 pika==1.3.1
 twilio==7.10.0
